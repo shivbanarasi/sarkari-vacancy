@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/views/style.css">
+    <title><%=title%></title>
+</head>
+<body>
+    <div class="navigation">
+        <nav>   
+            <ul>
+                <li><a href="/views/index.html">home</a></li>
+                <li><a href="">sarkari kaam</a></li>
+                <li><a href="">private kaam</a></li>
+                <li><a href="">new vacancy</a></li>
+                <li><a href="">admit card</a></li>
+                <li><a href="">result</a></li>
+                <li><a href="/views/aboutus.html">about us</a></li>
+                <li><a href="/views/contactus.html">contact us</a></li>
+                <li><a href="/views/admin.html">admin</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="display">
+        <h1 style="text-align: center;" id="mainhead">vacancy details</h1>
+        <br><br><h1 style="text-align: center;"><%=response[0].companyName%></h1>
+        <br><br><h4 id="appStartDate">application start date : <%=response[0].appStartDate%> </h4>
+        <br><h4 id="appenddate">application end date : <%=response[0].appEndDate%> </h4>
+        <br><h4 id="totalvacancy">total vacancy : <%=response[0].totalVacancy%> </h4>
+        <br><h4 id="syllabus">education qualification and syllabus </h4>
+        <br>
+        <div style="margin: 100px;">
+            <img src="data:image/png;base64,<%=response[0].syllabusAndEdu%>" alt="embaded image" width="700px" height="350px" >
+        </div>
+        
+
+        <br><br><h1 style="text-align: center;">links</h1><br><br>
+        <h4 id="applylink">apply : <a href="<%=response[0].apply%>" target="_blank">click here</a></h4>
+        <h4 id="applylink">download notification : <a href="<%=response[0].downloadNotification%>" target="_blank">click here</a></h4>
+        <h4 id="applylink">download admit card : <a href="<%=response[0].downloadadmitcard%>" target="_blank">click here</a></h4>
+        <h4 id="applylink">download result : <a href="<%=response[0].downloadresult%>" target="_blank">click here</a></h4>
+    </div>
+    <footer>
+        <div class="footer-content">
+            <p style="color: white;">&copy; 2023 Kaam. All rights reserved.</p>
+            <ul>
+                <li style="color: white;"><a href="#" style="color: white;">Privacy Policy</a></li>
+                <li style="color: white;"><a href="#" style="color: white;">Terms of Service</a></li>
+                <li style="color: white;"><a href="#" style="color: white;">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+    
+</body>
+
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="./display.js"></script> -->
+</html>

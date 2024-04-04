@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/views/style.css">
+    <title><%=title%></title>
+</head>
+<body>
+    <div class="navigation">
+        <nav>   
+            <ul>
+                <li><a href="./index.html">home</a></li>
+                <li><a href="">sarkari kaam</a></li>
+                <li><a href="">private kaam</a></li>
+                <li><a href="">new vacancy</a></li>
+                <li><a href="">admit card</a></li>
+                <li><a href="">result</a></li>
+                <li><a href="./aboutus.html">about us</a></li>
+                <li><a href="./contactus.html">contact us</a></li>
+                <li><a href="./admin.html">admin</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="vacancy-detail">
+        <h1 style="text-align: center;">Input vacancy details</h1>
+        <form method="POST" enctype="multipart/form-data" action="updateData/<%=id%>"  id="saveData">
+            <label for="cname">Name of company      : </label>
+            <input type="text" id="cname" name="cname" value="<%=response[0].companyName%>"><br>
+            <label for="notificationdate">notification date    : </label>
+            <input type="text" id="notificationdate" value="<%=response[0].notificationDate%>" name="notificationdate"><br>
+            <label for="applicationstartdate">application start date : </label>
+            <input type="text" id="applicationstartdate" value="<%=response[0].appStartDate%>" name="applicationstartdate"><br>
+            <label for="applicationenddate">application end date : </label>
+            <input type="text" id="applicationenddate" value="<%=response[0].appEndDate%>" name="applicationenddate"><br>
+            <label for="admitcarddate">exam date    : </label>
+            <input type="text" id="admitcarddate" value="<%=response[0].admitCardDate%>" name="admitcarddate"><br>
+            <label for="totalvacancy">vacancy           : </label>
+            <input type="text" id="totalvacancy" value="<%=response[0].totalVacancy%>" name="totalvacancy"><br>
+            <label for="admitcard">admit card           : </label>
+            <input type="text" name="admitcard" value="<%=response[0].admitcard%>" id="admitcard"><br>
+            <label for="result">result             : </label>
+            <input type="text" name="result" value="<%=response[0].result%>" id="result"><br>
+            <!-- <label for="vacancydiscription">vacancy discription : </label>
+            <input type="text" id="vacancydiscription" name="vacancydiscription"><br> -->
+            <label for="syllabusAndEdu">vacancy discription, educational qualification and syllabus: </label>
+            <input type="file" id="syllabusAndEdu" name="syllabusAndEdu"><br>
+            <h1 style="text-align: center;">links</h1><br><br>
+            <label for="downloadNotification">download notification : </label>
+            <input type="text" id="downloadNotification" name="downloadNotification"><br>
+            <label for="apply">apply             : </label>
+            <input type="text" id="apply" name="apply"><br>
+            <label for="downloadadmitcard">download admit card     : </label>
+            <input type="text" id="downloadadmitcard" name="downloadadmitcard"><br>
+            <label for="downloadresult">download result  :</label>
+            <input type="text" id="downloadresult" name="downloadresult"><br>
+            <button>submit</button>
+        </form>
+    </div>
+    <footer>
+        <div class="footer-content">
+            <p style="color: white;">&copy; 2023 Kaam. All rights reserved.</p>
+            <ul>
+                <li style="color: white;"><a href="#" style="color: white;">Privacy Policy</a></li>
+                <li style="color: white;"><a href="#" style="color: white;">Terms of Service</a></li>
+                <li style="color: white;"><a href="#" style="color: white;">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</html>
