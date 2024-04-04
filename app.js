@@ -13,8 +13,8 @@ app.use(bodyParser.urlencoded({extended:true}))
 
 app.set('view engine',"ejs")
 
-app.use("/.netlify/views",express.static(path.join(__dirname,'./','views')))
-app.use("/.netlify",route)
+app.use("/app/views",express.static(path.join(__dirname,'./','views')))
+app.use("/app",route)
 
 Sequelize.sync()
 module.exports.handler=serverless(app)
