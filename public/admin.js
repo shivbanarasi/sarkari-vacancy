@@ -11,7 +11,7 @@ console.log('this is admin page');
 //         totalVacancy:e.target.vacancy.value,
 //         apply:e.target.apply.value
 //     }
-//     axios.post('http://localhost:3000/views/admin.html',data)
+//     axios.post('axios.get("/.netlify/functions/app/views/index")',data)
 //     .then((res)=>{
 //         console.log(res)
 //     })

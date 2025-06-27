@@ -1,10 +1,10 @@
 [build]
-  command = "npm run build"
+  command = "npm install && npm run build"
   functions = "netlify/functions"
   publish = "public"
 
 [functions]
-  external_node_modules = ["express", "ejs", "sequelize", "body-parser"]
+  external_node_modules = ["express", "ejs", "sequelize", "body-parser", "mysql2", "multer"]
   node_bundler = "esbuild"
 
 [[redirects]]
@@ -12,3 +12,9 @@
   to = "/.netlify/functions/app/:splat"
   status = 200
   force = true
+
+# For static files
+[[redirects]]
+  from = "/assets/*"
+  to = "/public/:splat"
+  status = 200
