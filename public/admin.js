@@ -17,5 +17,5 @@ console.log('this is admin page');
 //     })
 // })
 
-// const resp=axios.get("http://localhost:3000/views/display")
+// const resp=axios.get("/.netlify/functions/app/views/index")
 // console.log(resp)

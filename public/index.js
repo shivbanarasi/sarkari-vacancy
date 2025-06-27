@@ -1,6 +1,6 @@
 console.log("this is index page")
 
-axios.get("http://localhost:3000/views/index")
+axios.get("/.netlify/functions/app/views/index")
 .then(res=>{
     console.log(res.data.length)
 
