@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Add to all HTML files -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <title>kaam admin</title>
 </head>
@@ -10,52 +13,95 @@
     <div class="navigation">
         <nav>   
             <ul>
-                <li><a href="./index.html">home</a></li>
-                <li><a href="">sarkari kaam</a></li>
-                <li><a href="">private kaam</a></li>
-                <li><a href="">new vacancy</a></li>
-                <li><a href="">admit card</a></li>
-                <li><a href="">result</a></li>
-                <li><a href="./aboutus.html">about us</a></li>
-                <li><a href="./contactus.html">contact us</a></li>
-                <li><a href="./admin.html">admin</a></li>
-            </ul>
+        <li><a href="./index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="#"><i class="fas fa-building"></i> Sarkari Kaam</a></li>
+        <li><a href="#"><i class="fas fa-briefcase"></i> Private Kaam</a></li>
+        <li><a href="#"><i class="fas fa-bell"></i> New Vacancy</a></li>
+        <li><a href="#"><i class="fas fa-id-card"></i> Admit Card</a></li>
+        <li><a href="#"><i class="fas fa-trophy"></i> Result</a></li>
+        <li><a href="./aboutus.html"><i class="fas fa-info-circle"></i> About Us</a></li>
+        <li><a href="./contactus.html"><i class="fas fa-envelope"></i> Contact Us</a></li>
+        <li><a href="./admin.html"><i class="fas fa-user-shield"></i> Admin</a></li>
+    </ul>
         </nav>
     </div>
-    <div class="vacancy-detail">
-        <h1 style="text-align: center;">Input vacancy details</h1>
-        <div class="vacancy-detail-list">
-        <form method="POST" enctype="multipart/form-data" action="/admin"  id="saveData">
-            <label for="cname">Name of company     : </label>
-            <input type="text" id="cname" name="cname"><br>
-            <label for="notificationdate">notification date     : </label>
-            <input type="text" id="notificationdate" name="notificationdate"><br>
-            <label for="applicationstartdate">application start date : </label>
-            <input type="text" id="applicationstartdate" name="applicationstartdate"><br>
-            <label for="applicationenddate">application end date   : </label>
-            <input type="text" id="applicationenddate" name="applicationenddate"><br>
-            <label for="admitcarddate">exam date    : </label>
-            <input type="text" id="admitcarddate" name="admitcarddate"><br>
-            <label for="totalvacancy">vacancy           : </label>
-            <input type="text" id="totalvacancy" name="totalvacancy"><br>
-            <label for="admitcard">admit card          : </label>
-            <input type="text" name="admitcard" id="admitcard"><br>
-            <label for="result">result               : </label>
-            <input type="text" name="result" id="result"><br>
-            <label for="syllabusAndEdu">educational qualification and syllabus: </label>
-            <input type="file" id="syllabusAndEdu" name="syllabusAndEdu"><br>
-            <h1 style="text-align: center;">links</h1><br><br>
-            <label for="downloadNotification">download notification : </label>
-            <input type="text" id="downloadNotification" name="downloadNotification"><br>
-            <label for="apply">apply             : </label>
-            <input type="text" id="apply" name="apply"><br>
-            <label for="downloadadmitcard">download admit card     : </label>
-            <input type="text" id="downloadadmitcard" name="downloadadmitcard"><br>
-            <label for="downloadresult">download result  :</label>
-            <input type="text" id="downloadresult" name="downloadresult"><br>
-            <button>submit</button>
+    <div class="admin-container">
+    <h1><i class="fas fa-tasks"></i> Vacancy Management</h1>
+    
+    <div class="admin-form-container">
+        <form method="POST" enctype="multipart/form-data" action="/admin" id="saveData">
+            <div class="form-section">
+                <h2><i class="fas fa-info-circle"></i> Basic Information</h2>
+                <div class="form-group">
+                    <label for="cname"><i class="fas fa-building"></i> Company Name</label>
+                    <input type="text" id="cname" name="cname" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="notificationdate"><i class="far fa-calendar"></i> Notification Date</label>
+                        <input type="date" id="notificationdate" name="notificationdate">
+                    </div>
+                    <div class="form-group">
+                        <label for="totalvacancy"><i class="fas fa-users"></i> Total Vacancy</label>
+                        <input type="number" id="totalvacancy" name="totalvacancy" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="far fa-calendar-alt"></i> Important Dates</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="applicationstartdate">Application Start Date</label>
+                        <input type="date" id="applicationstartdate" name="applicationstartdate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="applicationenddate">Application End Date</label>
+                        <input type="date" id="applicationenddate" name="applicationenddate" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="admitcarddate">Exam Date</label>
+                    <input type="date" id="admitcarddate" name="admitcarddate">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-file-alt"></i> Documents</h2>
+                <div class="form-group">
+                    <label for="syllabusAndEdu">Syllabus & Education Qualification</label>
+                    <input type="file" id="syllabusAndEdu" name="syllabusAndEdu">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-link"></i> Important Links</h2>
+                <div class="form-group">
+                    <label for="downloadNotification">Notification Link</label>
+                    <input type="url" id="downloadNotification" name="downloadNotification">
+                </div>
+                <div class="form-group">
+                    <label for="apply">Apply Link</label>
+                    <input type="url" id="apply" name="apply" required>
+                </div>
+                <div class="form-group">
+                    <label for="downloadadmitcard">Admit Card Link</label>
+                    <input type="url" id="downloadadmitcard" name="downloadadmitcard">
+                </div>
+                <div class="form-group">
+                    <label for="downloadresult">Result Link</label>
+                    <input type="url" id="downloadresult" name="downloadresult">
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-save"></i> Save Vacancy
+            </button>
         </form>
     </div>
+</div>
     <div class="update">
         <h2>for update <a href="/views/update">click here</a></h2>
     </div>
