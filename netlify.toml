@@ -4,5 +4,9 @@
   publish = "public"
 
 [functions]
-  external_node_modules = ["pg", "express", "ejs", "body-parser"]
+  external_node_modules = ["pg", "express", "ejs", "body-parser","multer"]
   node_bundler = "esbuild"
+  included_files = [
+    "server/**/*.js",
+    "netlify/functions/utils/*.js"
+  ]

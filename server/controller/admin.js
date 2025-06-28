@@ -1,6 +1,8 @@
-const pool = require('../util/database');
-const { upload } = require('../middleware/multer-config'); // Assuming you have this
+// Use this path pattern for server files
+const pool = require('../../netlify/functions/utils/database');
+const { upload } = require('../middleware/multer-config');
 
+// ... rest of your controller code
 module.exports = {
   // Save new vacancy
   saveData: async (req, res) => {

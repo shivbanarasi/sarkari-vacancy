@@ -22,7 +22,7 @@ app.use('/', express.static(path.join(__dirname, '../../public')));
 app.use('/.netlify/functions/app', route); // All API routes
 app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../../public/index.html'))); // Fallback
 
-const pool = require('./util/database');
+const pool = require('./utils/database');
 
 // Test connection on startup
 pool.query('SELECT NOW()')
