@@ -1,9 +1,10 @@
 const express = require('express');
+require('dotenv').config();
 const path = require('path');
 const serverless = require('serverless-http');
 const route = require('../../route/route');
 const bodyParser = require('body-parser');
-const Sequelize = require('../../util/database');
+
 
 const app = express();
 
@@ -21,9 +22,15 @@ app.use('/', express.static(path.join(__dirname, '../../public')));
 app.use('/.netlify/functions/app', route); // All API routes
 app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../../public/index.html'))); // Fallback
 
-// Database sync
-Sequelize.sync()
-  .then(() => console.log("Database synced"))
-  .catch(err => console.error("DB sync error:", err));
+const pool = require('./util/database');
+
+// Test connection on startup
+pool.query('SELECT NOW()')
+  .then(res => console.log('✅ Database connected at:', res.rows[0].now))
+  .catch(err => {
+    console.error('❌ Database connection failed');
+    console.error(err.stack);
+    process.exit(1); // Optional: Exit if DB is critical
+  });
 
 module.exports.handler = serverless(app);
