@@ -1,3 +1,4 @@
+// netlify/functions/init-db.js
 const { Pool } = require('pg');
 
 exports.handler = async () => {
@@ -34,7 +35,10 @@ exports.handler = async () => {
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
+      body: JSON.stringify({ 
+        error: error.message,
+        connection: process.env.DATABASE_URL // For debugging
+      }),
     };
   } finally {
     await pool.end();
