@@ -4,15 +4,5 @@
   publish = "public"
 
 [functions]
-  external_node_modules = ["express", "ejs", "sequelize", "body-parser", "mysql2", "multer"]
+  external_node_modules = ["pg", "express", "ejs", "body-parser"]
   node_bundler = "esbuild"
-
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/app/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/"
-  to = "/index.html"
-  status = 200

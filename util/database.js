@@ -1,14 +1,12 @@
-const Sequelize = require('sequelize');
+// util/database.js
+const { Pool } = require('pg');
 
-const sequelize = new Sequelize(
-  process.env.DB_SCHEMA,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    dialect: 'mysql',
-    host: process.env.DB_HOST,
-    logging: false // Disable logging in production
-  }
-);
+// Netlify automatically injects DATABASE_URL
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // Required for Neon's SSL
+  },
+});
 
-module.exports = sequelize;
+module.exports = pool;
