@@ -118,6 +118,38 @@
             </ul>
         </div>
     </footer>
+    <!-- public/admin.html -->
+<!-- Add this script at the bottom, before </body> -->
+<script>
+document.getElementById('saveData').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const form = e.target;
+  const formData = new FormData(form);
+  const submitBtn = form.querySelector('button[type="submit"]');
+  
+  try {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    
+    const response = await fetch('/.netlify/functions/app/admin', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) throw new Error(await response.text());
+    
+    alert('Vacancy saved successfully!');
+    form.reset();
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error saving vacancy: ' + error.message);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fas fa-save"></i> Save Vacancy';
+  }
+});
+</script>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </html>

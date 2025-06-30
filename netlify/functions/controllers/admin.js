@@ -1,192 +1,181 @@
+// netlify/functions/controllers/admin.js
 const pool = require('../utils/database');
 
 module.exports = {
-  // Save new vacancy
   saveData: async (req, res) => {
     try {
-      const syllabusAndEdu = req.file ? req.file.buffer.toString('base64') : null;
-      const {
-        cname, totalvacancy, notificationdate, 
-        applicationstartdate, apply, applicationenddate,
-        admitcarddate, admitcard, result,
-        downloadadmitcard, downloadresult, downloadNotification
-      } = req.body;
+      // Validate required fields
+      const requiredFields = ['cname', 'applicationstartdate', 'applicationenddate', 'totalvacancy', 'apply'];
+      const missingFields = requiredFields.filter(field => !req.body[field]);
+      
+      if (missingFields.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Missing required fields: ${missingFields.join(', ')}`,
+          missingFields
+        });
+      }
 
+      // Validate dates
+      const startDate = new Date(req.body.applicationstartdate);
+      const endDate = new Date(req.body.applicationenddate);
+      
+      if (startDate >= endDate) {
+        return res.status(400).json({
+          success: false,
+          message: 'Application end date must be after start date'
+        });
+      }
+
+      // Process file upload
+      let syllabusFile = null;
+      if (req.file) {
+        // Validate file type (allow PDF, DOCX, and images)
+        const allowedTypes = [
+          'application/pdf',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'image/jpeg',
+          'image/png'
+        ];
+        
+        if (!allowedTypes.includes(req.file.mimetype)) {
+          return res.status(400).json({
+            success: false,
+            message: 'Only PDF, Word, JPEG, and PNG files are allowed'
+          });
+        }
+
+        syllabusFile = {
+          filename: req.file.originalname,
+          mimetype: req.file.mimetype,
+          size: req.file.size,
+          data: req.file.buffer.toString('base64'),
+          uploaded_at: new Date().toISOString()
+        };
+      }
+
+      // Prepare data for database
+      const vacancyData = {
+        company_name: req.body.cname.trim(),
+        notification_date: req.body.notificationdate || null,
+        app_start_date: startDate.toISOString(),
+        app_end_date: endDate.toISOString(),
+        admit_card_date: req.body.admitcarddate ? new Date(req.body.admitcarddate).toISOString() : null,
+        total_vacancy: parseInt(req.body.totalvacancy),
+        apply: req.body.apply.trim(),
+        syllabus_and_edu: syllabusFile ? JSON.stringify(syllabusFile) : null,
+        admit_card: req.body.admitcard ? req.body.admitcard.trim() : null,
+        result: req.body.result ? req.body.result.trim() : null,
+        download_notification: req.body.downloadNotification ? req.body.downloadNotification.trim() : null,
+        download_result: req.body.downloadresult ? req.body.downloadresult.trim() : null,
+        download_admit_card: req.body.downloadadmitcard ? req.body.downloadadmitcard.trim() : null
+      };
+
+      // Database insertion
       const query = `
         INSERT INTO vacancies (
-          company_name, category, notification_date, app_start_date,
-          app_end_date, admit_card_date, total_vacancy, apply,
-          syllabus_and_edu, admit_card, result, download_notification,
-          download_result, download_admit_card
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
-        RETURNING *;
+          company_name, notification_date, app_start_date,
+          app_end_date, admit_card_date, total_vacancy,
+          apply, syllabus_and_edu, admit_card, result,
+          download_notification, download_result, download_admit_card
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        RETURNING 
+          id, 
+          company_name, 
+          to_char(app_start_date, 'YYYY-MM-DD') as app_start_date,
+          to_char(app_end_date, 'YYYY-MM-DD') as app_end_date,
+          total_vacancy;
       `;
 
-      const values = [
-        cname, true, notificationdate, applicationstartdate,
-        applicationenddate, admitcarddate, totalvacancy, apply,
-        syllabusAndEdu, admitcard, result, downloadNotification,
-        downloadresult, downloadadmitcard
-      ];
+      const { rows } = await pool.query(query, [
+        vacancyData.company_name,
+        vacancyData.notification_date,
+        vacancyData.app_start_date,
+        vacancyData.app_end_date,
+        vacancyData.admit_card_date,
+        vacancyData.total_vacancy,
+        vacancyData.apply,
+        vacancyData.syllabus_and_edu,
+        vacancyData.admit_card,
+        vacancyData.result,
+        vacancyData.download_notification,
+        vacancyData.download_result,
+        vacancyData.download_admit_card
+      ]);
 
-      const { rows } = await pool.query(query, values);
-      console.log('New vacancy created:', rows[0]);
-      
-      // Redirect to admin page (relative path)
-      res.redirect('/admin.html');
-    } catch (err) {
-      console.error('Error saving data:', err);
-      res.status(500).send('Server Error: ' + err.message);
+      return res.status(201).json({
+        success: true,
+        message: 'Vacancy saved successfully',
+        data: rows[0],
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error('Database error:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+        error: error.message,
+        timestamp: new Date().toISOString()
+      });
     }
   },
 
-  // Get data for display page
   getdatatodisplay: async (req, res) => {
     try {
-      const companyName = req.params.id;
-      
+      const { id } = req.params;
       const { rows } = await pool.query(
-        `SELECT * FROM vacancies 
+        `SELECT 
+          id,
+          company_name,
+          to_char(notification_date, 'YYYY-MM-DD') as notification_date,
+          to_char(app_start_date, 'YYYY-MM-DD') as app_start_date,
+          to_char(app_end_date, 'YYYY-MM-DD') as app_end_date,
+          total_vacancy,
+          apply,
+          admit_card,
+          result,
+          download_notification,
+          download_result,
+          download_admit_card
+         FROM vacancies 
          WHERE company_name = $1 
          ORDER BY app_start_date DESC 
          LIMIT 10`,
-        [companyName]
-      );
-
-      if (rows.length === 0) {
-        return res.status(404).render('error', { message: 'Company not found' });
-      }
-
-      res.render('display', {
-        title: rows[0].company_name,
-        response: rows
-      });
-    } catch (err) {
-      console.error('Error fetching data:', err);
-      res.status(500).render('error', { message: 'Database error' });
-    }
-  },
-
-  // Get all vacancies for index page
-  getdatatoindex: async (req, res) => {
-    try {
-      const { rows } = await pool.query(
-        `SELECT * FROM vacancies ORDER BY app_start_date DESC`
-      );
-      res.status(200).json(rows);
-    } catch (err) {
-      console.error('Error fetching vacancies:', err);
-      res.status(500).json({ error: 'Database error' });
-    }
-  },
-
-  // Render update page
-  update: (req, res) => {
-    res.render('update', { response: [] });
-  },
-
-  // Search for vacancies
-  search: async (req, res) => {
-    try {
-      const { updateSearch } = req.body;
-      const { rows } = await pool.query(
-        `SELECT * FROM vacancies WHERE company_name ILIKE $1`,
-        [`%${updateSearch}%`]
-      );
-      res.render('update', { response: rows });
-    } catch (err) {
-      console.error('Search error:', err);
-      res.render('update', { response: [] });
-    }
-  },
-
-  // Get single vacancy for updating
-  updating: async (req, res) => {
-    try {
-      const id = req.params.id;
-      const { rows } = await pool.query(
-        `SELECT * FROM vacancies WHERE id = $1`,
-        [id]
-      );
-      
-      if (rows.length === 0) {
-        return res.redirect('/admin.html');
-      }
-
-      res.render("admin", {
-        response: rows,
-        title: "update",
-        id: id
-      });
-    } catch (err) {
-      console.error('Error fetching record:', err);
-      res.redirect('/admin.html');
-    }
-  },
-
-  // Update vacancy data
-  updateData: async (req, res) => {
-    try {
-      const id = req.params.id;
-      const syllabusAndEdu = req.file ? req.file.buffer.toString('base64') : null;
-      const {
-        cname, totalvacancy, notificationdate,
-        applicationstartdate, apply, applicationenddate,
-        admitcarddate, admitcard, result,
-        downloadadmitcard, downloadresult, downloadNotification
-      } = req.body;
-
-      // Get existing data first
-      const { rows: [existing] } = await pool.query(
-        `SELECT * FROM vacancies WHERE id = $1`,
         [id]
       );
 
-      if (!existing) {
-        return res.redirect('/admin.html');
+      if (rows.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'No vacancies found for this company'
+        });
       }
 
-      const query = `
-        UPDATE vacancies SET
-          company_name = $1,
-          notification_date = $2,
-          app_start_date = $3,
-          app_end_date = $4,
-          admit_card_date = $5,
-          total_vacancy = $6,
-          apply = $7,
-          syllabus_and_edu = COALESCE($8, syllabus_and_edu),
-          admit_card = COALESCE($9, admit_card),
-          result = COALESCE($10, result),
-          download_notification = COALESCE($11, download_notification),
-          download_result = COALESCE($12, download_result),
-          download_admit_card = COALESCE($13, download_admit_card)
-        WHERE id = $14
-        RETURNING *;
-      `;
+      // Parse syllabus data if exists
+      const processedRows = rows.map(row => {
+        if (row.syllabus_and_edu) {
+          try {
+            row.syllabus_and_edu = JSON.parse(row.syllabus_and_edu);
+          } catch (e) {
+            console.error('Error parsing syllabus data:', e);
+            row.syllabus_and_edu = null;
+          }
+        }
+        return row;
+      });
 
-      const values = [
-        cname || existing.company_name,
-        notificationdate || existing.notification_date,
-        applicationstartdate || existing.app_start_date,
-        applicationenddate || existing.app_end_date,
-        admitcarddate || existing.admit_card_date,
-        totalvacancy || existing.total_vacancy,
-        apply || existing.apply,
-        syllabusAndEdu,
-        admitcard,
-        result,
-        downloadNotification,
-        downloadresult,
-        downloadadmitcard,
-        id
-      ];
+      return res.json({
+        success: true,
+        data: processedRows
+      });
 
-      await pool.query(query, values);
-      res.redirect('/admin.html');
-    } catch (err) {
-      console.error('Update error:', err);
-      res.redirect('/admin.html');
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to fetch vacancies'
+      });
     }
   }
 };
