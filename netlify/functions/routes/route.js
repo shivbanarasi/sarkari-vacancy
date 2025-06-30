@@ -1,30 +1,22 @@
 const express = require('express');
-const route = express.Router();
+const router = express.Router();
 const multer = require('multer');
-const path = require('path');
-
-// Correct relative path to controller
 const adminController = require('../controllers/admin');
 
-// Configure multer for file uploads
-const storage = multer.memoryStorage();
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+// File upload configuration
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB
 });
 
-// Routes
-route.get('/', (req, res) => {
-  res.send('Vacancy API is running');
-});
+// API Routes
+router.get('/', (req, res) => res.json({ status: 'API running' }));
+router.post('/admin', upload.single('syllabusAndEdu'), adminController.saveData);
+router.get('/views/display/:id', adminController.getdatatodisplay);
+router.get('/views/index', adminController.getdatatoindex);
+router.get('/views/update', adminController.update);
+router.post('/views/search/', adminController.search);
+router.get('/views/updating/:id', adminController.updating);
+router.post('/views/updating/updateData/:id', upload.single('syllabusAndEdu'), adminController.updateData);
 
-// Admin routes
-route.post('/admin', upload.single('syllabusAndEdu'), adminController.saveData);
-route.get('/views/display/:id', adminController.getdatatodisplay);
-route.get('/views/index', adminController.getdatatoindex);
-route.get('/views/update', adminController.update);
-route.post('/views/search/', adminController.search);
-route.get('/views/updating/:id', adminController.updating);
-route.post('/views/updating/updateData/:id', upload.single('syllabusAndEdu'), adminController.updateData);
-
-module.exports = route;
+module.exports = router;

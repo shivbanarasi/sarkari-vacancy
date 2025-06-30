@@ -2,35 +2,32 @@ const express = require('express');
 require('dotenv').config();
 const path = require('path');
 const serverless = require('serverless-http');
-const route = require('../../route/route');
 const bodyParser = require('body-parser');
-
 
 const app = express();
 
+// Database connection
+const pool = require('./utils/database');
+
+// Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Configure view engine
+// View engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../../public/views'));
 
-// Serve static files from public
-app.use('/', express.static(path.join(__dirname, '../../public')));
+// Static files
+app.use(express.static(path.join(__dirname, '../../public')));
 
-// Mount routes
-app.use('/.netlify/functions/app', route); // All API routes
-app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../../public/index.html'))); // Fallback
+// Routes
+const router = require('./routes/route');
+app.use('/.netlify/functions/app', router); // API endpoint
+app.use('*', (req, res) => res.sendFile(path.join(__dirname, '../../public/index.html'))); // Frontend fallback
 
-const pool = require('./utils/database');
-
-// Test connection on startup
+// Database connection test
 pool.query('SELECT NOW()')
-  .then(res => console.log('✅ Database connected at:', res.rows[0].now))
-  .catch(err => {
-    console.error('❌ Database connection failed');
-    console.error(err.stack);
-    process.exit(1); // Optional: Exit if DB is critical
-  });
+  .then(res => console.log('Database connected at:', res.rows[0].now))
+  .catch(err => console.error('Database connection failed:', err));
 
 module.exports.handler = serverless(app);
